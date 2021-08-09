@@ -45,6 +45,12 @@ const userSchema = mongoose.Schema(
     }
 )
 
+userSchema.virtual('feed', {
+    ref: 'Feed',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
@@ -81,6 +87,13 @@ userSchema.statics.findByCredentials = async (email, password) => {
     }
     return user
 }
+
+//delete feed when user is deleted
+userSchema.pre('remove', async function (next) {
+    const user = this
+    await Task.deleteMany({ owner: user._id })
+    next()
+})
 
 const User = mongoose.model('User', userSchema)
 module.exports = User
