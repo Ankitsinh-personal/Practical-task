@@ -3,6 +3,7 @@ const validator = require('validator')
 require('dotenv').config()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const Feed = require('./feed')
 const userSchema = mongoose.Schema(
     {
         name:{
@@ -88,12 +89,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
-//delete feed when user is deleted
-userSchema.pre('remove', async function (next) {
-    const user = this
-    await Task.deleteMany({ owner: user._id })
-    next()
-})
+
 
 const User = mongoose.model('User', userSchema)
 module.exports = User

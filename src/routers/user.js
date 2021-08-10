@@ -1,4 +1,3 @@
-const http = require('http')
 const express = require('express')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
