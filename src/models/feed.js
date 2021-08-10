@@ -12,6 +12,9 @@ const feedSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,       //foreign key
             required: true,
             ref: 'User'
+        },
+        image:{
+            type:Buffer,
         }
     },
     {

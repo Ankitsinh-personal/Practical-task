@@ -1,17 +1,32 @@
 const express = require('express')
 const auth = require('../middleware/auth')
 const Feed = require('../models/feed')
-
+const multer = require('multer')
 const router = new express.Router()
 
-//feed create
-router.post('/feed',auth, async (req, res) => {
 
-    const feed = new Feed({
-        ...req.body,
-        owner:req.user._id           
-    })  
+//upload image
+const upload = multer({
+    dest : 'image',
+    limits : {
+        fieldSize : 100000
+    },
+    fileFilter(req,file,cb){
+        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+            return cb(new Error('File must be image !'))
+        }
+        cb(undefined, true)
+    }
+})
+//feed create
+router.post('/feed',auth,upload.single('image'), async (req, res) => {
+    
     try {
+        const feed = new Feed({
+            ...req.body,
+            image:req.file.filename,
+            owner:req.user._id           
+        })
         await feed.save()
         res.status(201).send(feed)
     } catch (e) {
